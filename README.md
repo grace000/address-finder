@@ -5,7 +5,8 @@ Find coordinates of landmarks
 ## Usage 
 
 1. Enter search parameters
-2. View coordinates
+2. View address
+3. View recent search coordinates
 
 
 ## Technologies Used

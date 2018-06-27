@@ -24,9 +24,6 @@ app.use(express.static("./public"));
 
 // -------------------------------------------------
 
-// var db = mongoose.connection;
-// mongoose.connect("mongodb://localhost/addressfinder");
-
 mongoose.Promise = Promise;
 
 var dotenv = require('dotenv').config();
