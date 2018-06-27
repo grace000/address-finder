@@ -11,7 +11,7 @@ var History = require("./models/history");
 // Create a new express app
 var app = express();
 // Sets an initial port. We'll use this later in our listener
-var $PORT = process.env.$PORT || 3000;
+var port = process.env.PORT || 3000;
 
 // Run Morgan for Logging
 app.use(logger("dev"));
@@ -108,6 +108,6 @@ app.post("/api", function(req, res) {
 // -------------------------------------------------
 
 // Starting our express server
-app.listen($PORT, function() {
-  console.log("App listening on PORT: " + $PORT);
+app.listen(port, function() {
+  console.log("App listening on PORT: " + port);
 });
