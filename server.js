@@ -3,9 +3,10 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var mongojs = require("mongojs");
 
 // Require Click schema
-var Click = require("./models/click");
+var History = require("./models/history");
 
 // Create a new express app
 var app = express();
@@ -23,9 +24,36 @@ app.use(express.static("./public"));
 
 // -------------------------------------------------
 
-// MongoDB configuration (Change this URL to your own DB)
-// mongoose.connect("mongodb://heroku_vf15glln:b3j18im294jgg07512otaii3j1@ds129422.mlab.com:29422/heroku_vf15glln");
 // var db = mongoose.connection;
+// mongoose.connect("mongodb://localhost/addressfinder");
+
+mongoose.Promise = Promise;
+
+var dotenv = require('dotenv').config();
+
+var uristring =
+
+process.env.MONGODB_URI ||
+'mongodb://localhost/addressfinder';
+
+mongoose.connection.openUri(uristring, function (err, res) {
+  if (err) {
+  console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+  } else {
+  console.log ('Succeeded connected to: ' + uristring);
+  }
+});
+
+
+// Mongojs configuration
+var databaseUrl = "addressfinder";
+var collections = ["books"];
+
+// Hook our mongojs config to the db var
+var db = mongojs(databaseUrl, collections);
+db.on("error", function(error) {
+  console.log("Database Error:", error);
+});
 
 db.on("error", function(err) {
   console.log("Mongoose Error: ", err);
@@ -47,8 +75,9 @@ app.get("/", function(req, res) {
 app.get("/api", function(req, res) {
 
   // This GET request will search for the latest clickCount
-  Click.find({}).exec(function(err, doc) {
-
+  History.find({}).sort([
+    ["date", "descending"]
+  ]).limit(5).exec(function(err, doc) {
     if (err) {
       console.log(err);
     }
@@ -62,25 +91,19 @@ app.get("/api", function(req, res) {
 // We will call this route the moment the "click" or "reset" button is pressed.
 app.post("/api", function(req, res) {
 
-  var clickID = req.body.clickID;
-  var clicks = parseInt(req.body.clicks);
-
   // Note how this route utilizes the findOneAndUpdate function to update the clickCount
   // { upsert: true } is an optional object we can pass into the findOneAndUpdate method
   // If included, Mongoose will create a new document matching the description if one is not found
-  Click.findOneAndUpdate({
-    clickID: clickID
-  }, {
-    $set: {
-      clicks: clicks
-    }
-  }, { upsert: true }).exec(function(err) {
+  History.create({
+    location: req.body.location,
+    date: Date.now()
+  }, function(err) {
 
     if (err) {
       console.log(err);
     }
     else {
-      res.send("Updated Click Count!");
+      res.send("Updated Location!");
     }
   });
 });

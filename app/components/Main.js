@@ -4,6 +4,7 @@ var React = require("react");
 // Here we include all of the sub-components
 var Form = require("./children/Form");
 var Results = require("./children/Results");
+var Searches = require("./children/Searches");
 
 // Helper Function
 var helpers = require("./utils/helpers.js");
@@ -13,7 +14,17 @@ var Main = React.createClass({
 
   // Here we set a generic state associated with the number of clicks
   getInitialState: function() {
-    return { searchTerm: "", results: "" };
+    return { searchTerm: "", results: "", location: []};
+  },
+
+  componentDidMount: function() {
+    helpers.getHistory().then(function(response){
+      console.log(response);
+      if(response !== this.state.location){
+        console.log("searches:", response.data);
+        this.setState({location: response.data});
+      }
+    }.bind(this));
   },
 
   // If the component updates we'll run this code
@@ -28,11 +39,18 @@ var Main = React.createClass({
           console.log(data);
 
           this.setState({ results: data });
-        }
 
-        // This code is necessary to bind the keyword "this" when we say this.setState
-        // to actually mean the component itself and not the runQuery function.
+          helpers.postHistory(this.state.searchTerm).then(function(){
+            console.log("Updated history!");
+
+            helpers.getHistory().then(function(response){
+              console.log("current", response);
+              this.setState({location: response.data});
+            }.bind(this))
+          }.bind(this))
+        }
       }.bind(this));
+
     }
   },
   // We use this function to allow children to update the parent with searchTerms.
@@ -66,6 +84,13 @@ var Main = React.createClass({
 
           </div>
 
+          <div className="row">
+            <div className="col-md-12">
+
+              <Searches location={this.state.location} />
+
+            </div>
+          </div>
         </div>
 
       </div>

@@ -4,7 +4,7 @@ var axios = require("axios");
 // Geocoder API
 var geocodeAPI = "35e5548c618555b1a43eb4759d26b260";
 
-// Helper Functions (in this case the only one is runQuery)
+// Helper Functions 
 var helpers = {
 
   runQuery: function(location) {
@@ -19,7 +19,14 @@ var helpers = {
       console.log(response);
       return response.data.results[0].formatted;
     });
+  },
 
+  getHistory: function(){
+  	return axios.get("/api");
+  },
+
+  postHistory: function(location){
+  	return axios.post("/api", { location: location });
   }
 
 };
