@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 
-app.use(express.static(__dirname + "./public"));
+app.use(express.static(__dirname + "/public"));
 
 // -------------------------------------------------
 
@@ -64,7 +64,7 @@ db.once("open", function() {
 
 // Main "/" Route. This will redirect the user to our rendered React application
 app.get("/", function(req, res) {
-  res.sendFile(__dirname + "./public/index.html");
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 // This is the route we will send GET requests to retrieve our most recent click data.
